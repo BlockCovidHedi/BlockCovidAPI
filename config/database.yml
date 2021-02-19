@@ -84,6 +84,7 @@ test:
 staging :
   <<: *default
   username: dasr1j5unkslp4
+  database: BlockCovidApi_Hedi_staging
   url: <%= ENV['DATABASE_URL'] %>
 
 production:
