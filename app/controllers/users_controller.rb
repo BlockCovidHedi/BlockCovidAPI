@@ -16,11 +16,20 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
+    if(@user.role=='doctor')
+      @doctor = @user.build_doctor(doctor_params(@user.id))
+    end
 
-    if @user.save
-      render :show, status: :created, location: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
+    User.transaction do
+      if @user.save!
+        if @doctor.save!
+          render json: [@user, @doctor]
+        else
+          render json: @doctor.errors, status: :unprocessable_entity
+        end
+      else
+        render json: @user.errors, status: :unprocessable_entity
+      end
     end
   end
 
@@ -41,13 +50,16 @@ class UsersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_user
+    @user = User.find(params[:id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def user_params
-      params.require(:user).permit(:email, :password, :role)
-    end
+  # Only allow a list of trusted parameters through.
+  def user_params
+    params.permit(:email, :role, :password, :password_confirmation, :password_digest)
+  end
+  def doctor_params(user_id)
+    params.permit(:name, :first_name, :inami, :phone_number, user_id)
+  end
 end

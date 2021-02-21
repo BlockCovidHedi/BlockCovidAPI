@@ -1,0 +1,14 @@
+POST http://localhost:8000/users
+Content-Type: application/json
+
+{
+  "email" : "mzoughi-hedi@hotmail.comuuuu",
+  "password" : "1234",
+  "role" : "doctor",
+  "first_name" : "Hedi",
+  "inami" : "4445",
+  "name" : "Mzoughi",
+  "phone_number" : "0483659044"
+}
+
+###
