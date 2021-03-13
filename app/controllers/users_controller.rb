@@ -18,14 +18,26 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if(@user.role=='doctor')
       @doctor = @user.build_doctor(doctor_params(@user.id))
+    elsif(@user.role=='establishment')
+      @establishment = @user.build_establishment(establishment_params(@user.id))
     end
 
     User.transaction do
       if @user.save!
-        if @doctor.save!
-          render json: [@user, @doctor]
+        if(@user.role == 'doctor')
+          if @doctor.save!
+            render json: [@user, @doctor]
+          else
+            render json: @doctor.errors, status: :unprocessable_entity
+          end
+        elsif(@user.role == 'establishment')
+          if @establishment.save!
+            render json: [@user, @establishment]
+          else
+            render json: @establishment.errors, status: :unprocessable_entity
+          end
         else
-          render json: @doctor.errors, status: :unprocessable_entity
+          render json: error
         end
       else
         render json: @user.errors, status: :unprocessable_entity
@@ -61,5 +73,8 @@ class UsersController < ApplicationController
   end
   def doctor_params(user_id)
     params.permit(:name, :first_name, :inami, :phone_number, user_id)
+  end
+  def establishment_params(user_id)
+    params.permit(:name, :phone_number, user_id)
   end
 end
