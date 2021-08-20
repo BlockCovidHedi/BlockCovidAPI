@@ -20,15 +20,13 @@ class LoginController < ApplicationController
       user = User.find(user_id)
       if(user.role == 'doctor')
         doctor = Doctor.find_by('user_id':user.id)
-        render json: {user: user, doctor: doctor }
+        render json: {user: user, infos: doctor }
       elsif(user.role == 'establishment')
         establishment = Establishment.find_by('user_id':user.id)
-        render json: {user: user, establishment: establishment}
+        render json: {user: user, infos: establishment}
       end
-      render json: error
     end
   end
-
 
   def login_params
     params.permit(:email, :password)
